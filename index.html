@@ -2,56 +2,88 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Globalisation — Abdullah & Waqas</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
         --gold: #c9a84c;
         --gold-light: #f0d080;
+        --gold-dim: rgba(201, 168, 76, 0.18);
         --dark: #06080f;
-        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-bg: rgba(255, 255, 255, 0.045);
         --border: rgba(201, 168, 76, 0.22);
         --text: #f0ece0;
-        --muted: rgba(240, 236, 224, 0.62);
+        --muted: rgba(240, 236, 224, 0.6);
       }
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
       body {
         background: var(--dark);
         color: var(--text);
         font-family: "DM Sans", sans-serif;
-        overflow: hidden;
-        height: 100vh;
         cursor: none;
       }
-      .cursor {
-        width: 10px;
-        height: 10px;
+
+      /* ── CURSOR ── */
+      #cursor {
+        width: 9px;
+        height: 9px;
         background: var(--gold);
         border-radius: 50%;
         position: fixed;
         pointer-events: none;
         z-index: 9999;
         transform: translate(-50%, -50%);
+        transition: transform 0.15s;
       }
-      .cursor-ring {
-        display: none;
+      #cursorRing {
+        width: 34px;
+        height: 34px;
+        border: 1.5px solid rgba(201, 168, 76, 0.45);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 9998;
+        transform: translate(-50%, -50%);
+        transition:
+          left 0.08s,
+          top 0.08s;
       }
-      .progress-bar {
+      body:hover #cursor {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      /* ── PROGRESS ── */
+      #progress {
         position: fixed;
         top: 0;
         left: 0;
         height: 3px;
         background: linear-gradient(90deg, var(--gold), var(--gold-light));
-        z-index: 200;
-        transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-        box-shadow: 0 0 12px var(--gold);
+        z-index: 300;
+        transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 0 14px var(--gold);
+      }
+
+      /* ── CANVAS + GRID ── */
+      #bgCanvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
       }
       .grid-bg {
         position: fixed;
@@ -59,102 +91,127 @@
         z-index: 0;
         pointer-events: none;
         background-image:
-          linear-gradient(rgba(201, 168, 76, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(201, 168, 76, 0.03) 1px, transparent 1px);
+          linear-gradient(rgba(201, 168, 76, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(201, 168, 76, 0.025) 1px, transparent 1px);
         background-size: 64px 64px;
       }
-      #bgCanvas {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-      }
+
+      /* ── HEADER BRAND ── */
       .brand {
         position: fixed;
-        top: 28px;
-        left: 44px;
-        z-index: 100;
+        top: 22px;
+        left: 36px;
+        z-index: 200;
       }
       .brand-names {
         font-family: "Playfair Display", serif;
-        font-size: 15px;
+        font-size: 14px;
         color: var(--gold);
         letter-spacing: 0.5px;
       }
       .brand-sub {
-        font-size: 10px;
+        font-size: 9px;
         color: var(--muted);
         letter-spacing: 3px;
         text-transform: uppercase;
         margin-top: 2px;
       }
+
+      /* ── COUNTER ── */
       .slide-counter {
         position: fixed;
-        top: 32px;
-        right: 44px;
+        top: 26px;
+        right: 36px;
         font-size: 11px;
         letter-spacing: 3px;
         color: var(--muted);
-        z-index: 100;
+        z-index: 200;
       }
       .slide-counter span {
         color: var(--gold);
       }
+
+      /* ── PRESENTER TAG ── */
+      .presenter-tag {
+        position: fixed;
+        bottom: 72px;
+        right: 36px;
+        z-index: 200;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: var(--muted);
+        text-align: right;
+        transition: opacity 0.5s;
+      }
+      .presenter-tag strong {
+        display: block;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 2px;
+      }
+
+      /* ── BOTTOM NAV ── */
       .key-hint {
         position: fixed;
-        bottom: 34px;
-        left: 44px;
-        font-size: 11px;
+        bottom: 28px;
+        left: 36px;
+        font-size: 10px;
         color: var(--muted);
         letter-spacing: 2px;
-        z-index: 100;
+        z-index: 200;
       }
       .key-hint kbd {
         border: 1px solid rgba(201, 168, 76, 0.3);
         border-radius: 4px;
         padding: 2px 7px;
-        font-size: 11px;
+        font-size: 10px;
         color: var(--gold);
         font-family: "DM Sans", sans-serif;
       }
       .slide-dots {
         position: fixed;
-        bottom: 34px;
+        bottom: 28px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 10px;
-        z-index: 100;
+        gap: 8px;
+        z-index: 200;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 80vw;
       }
       .dot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: rgba(201, 168, 76, 0.3);
+        background: rgba(201, 168, 76, 0.28);
         cursor: pointer;
         transition: all 0.35s;
+        flex-shrink: 0;
       }
       .dot.active {
-        width: 28px;
+        width: 24px;
         border-radius: 3px;
         background: var(--gold);
       }
       .controls {
         position: fixed;
-        bottom: 26px;
-        right: 44px;
+        bottom: 20px;
+        right: 36px;
         display: flex;
-        gap: 12px;
-        z-index: 100;
+        gap: 10px;
+        z-index: 200;
       }
       .nav-btn {
-        width: 50px;
-        height: 50px;
+        width: 46px;
+        height: 46px;
         border-radius: 50%;
         border: 1px solid var(--border);
         background: rgba(201, 168, 76, 0.06);
         color: var(--gold);
-        font-size: 20px;
+        font-size: 18px;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -166,25 +223,32 @@
         background: var(--gold);
         color: var(--dark);
         border-color: var(--gold);
-        transform: scale(1.08);
+        transform: scale(1.1);
       }
 
-      /* SLIDE — top padding so brand doesn't overlap, scrollable */
+      /* ── SLIDES WRAPPER ── */
+      .slides-wrapper {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+      }
+
+      /* ── SLIDE BASE ── */
       .slide {
         position: absolute;
         inset: 0;
-        z-index: 1;
         display: flex;
         align-items: flex-start;
         justify-content: flex-start;
-        padding: 90px 8vw 90px;
+        padding: 72px 7vw 80px;
         overflow-y: auto;
+        overflow-x: hidden;
         opacity: 0;
         pointer-events: none;
         transition:
-          opacity 0.75s ease,
-          transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-        transform: translateX(70px);
+          opacity 0.7s ease,
+          transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        transform: translateX(80px);
       }
       .slide.active {
         opacity: 1;
@@ -193,112 +257,45 @@
       }
       .slide.exit {
         opacity: 0;
-        transform: translateX(-70px);
+        transform: translateX(-80px);
       }
-      /* hide scrollbar visually but keep scroll */
       .slide::-webkit-scrollbar {
-        width: 4px;
-      }
-      .slide::-webkit-scrollbar-track {
-        background: transparent;
+        width: 3px;
       }
       .slide::-webkit-scrollbar-thumb {
         background: rgba(201, 168, 76, 0.2);
         border-radius: 2px;
       }
-
-      /* hero vertically centered */
       .slide-hero {
         align-items: center;
       }
 
-      /* HERO */
-      .hero-content {
-        max-width: 820px;
-      }
-      .hero-tag {
-        display: inline-block;
-        border: 1px solid var(--gold);
-        color: var(--gold);
-        font-size: 11px;
-        letter-spacing: 4px;
-        text-transform: uppercase;
-        padding: 7px 20px;
-        border-radius: 2px;
-        margin-bottom: 36px;
-        opacity: 0;
-        animation: fadeUp 0.8s 0.3s forwards;
-      }
-      .hero-title {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(50px, 6.5vw, 96px);
-        font-weight: 900;
-        line-height: 1.04;
-        color: #fff;
-        opacity: 0;
-        animation: fadeUp 0.8s 0.5s forwards;
-      }
-      .hero-title span {
-        color: var(--gold);
-        display: block;
-      }
-      .hero-presenters {
-        margin-top: 44px;
-        opacity: 0;
-        animation: fadeUp 0.8s 0.7s forwards;
-        display: flex;
-        gap: 0;
-      }
-      .presenter-card {
-        padding: 18px 36px 18px 0;
-        border-top: 1px solid var(--border);
-      }
-      .presenter-label {
-        font-size: 10px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 6px;
-      }
-      .presenter-name {
-        font-size: 20px;
-        font-weight: 900;
-        color: #fff;
-        letter-spacing: 0.5px;
-      }
-      .presenter-role {
-        font-size: 12px;
-        color: var(--gold);
-        margin-top: 3px;
-        letter-spacing: 1px;
-      }
-
-      /* SLIDE CARD */
+      /* ── SLIDE CONTENT CARD ── */
       .slide-card {
-        max-width: 900px;
+        max-width: 920px;
         width: 100%;
-        padding-top: 4px;
+        padding-top: 8px;
       }
       .slide-number {
         font-size: 10px;
         letter-spacing: 4px;
         color: var(--gold);
         text-transform: uppercase;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
         opacity: 0.75;
       }
       .slide-icon {
-        font-size: 42px;
-        margin-bottom: 16px;
+        font-size: 40px;
+        margin-bottom: 14px;
         display: block;
-        filter: drop-shadow(0 0 22px rgba(201, 168, 76, 0.35));
+        filter: drop-shadow(0 0 20px rgba(201, 168, 76, 0.35));
       }
       .slide-title {
         font-family: "Playfair Display", serif;
-        font-size: clamp(30px, 3.8vw, 52px);
+        font-size: clamp(26px, 3.8vw, 50px);
         font-weight: 700;
         color: #fff;
-        margin-bottom: 22px;
+        margin-bottom: 20px;
         line-height: 1.12;
       }
       .slide-title em {
@@ -306,28 +303,26 @@
         font-style: normal;
       }
       .slide-text {
-        font-size: 20px;
-        line-height: 1.78;
+        font-size: clamp(15px, 1.6vw, 19px);
+        line-height: 1.8;
         color: var(--text);
-        max-width: 660px;
-        font-weight: 400;
+        max-width: 680px;
       }
 
-      /* LIST */
+      /* ── LISTS ── */
       .vip-list {
         list-style: none;
-        margin-top: 6px;
+        margin-top: 4px;
       }
       .vip-list li {
         display: flex;
         align-items: flex-start;
-        gap: 16px;
-        padding: 13px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        font-size: 18px;
+        gap: 14px;
+        padding: 11px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+        font-size: clamp(14px, 1.5vw, 17px);
         color: var(--text);
-        line-height: 1.5;
-        font-weight: 400;
+        line-height: 1.55;
         transition:
           color 0.3s,
           padding-left 0.3s;
@@ -339,46 +334,124 @@
       .vip-list li::before {
         content: "◆";
         color: var(--gold);
-        font-size: 9px;
-        margin-top: 6px;
+        font-size: 8px;
+        margin-top: 5px;
         flex-shrink: 0;
       }
 
+      /* ── TWO COLS ── */
       .two-col {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 18px;
-        margin-top: 8px;
+        gap: 16px;
+        margin-top: 10px;
+      }
+      @media (max-width: 600px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
       }
       .col-card {
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 22px;
+        padding: 20px;
         backdrop-filter: blur(10px);
       }
       .col-card-icon {
-        font-size: 26px;
-        margin-bottom: 10px;
+        font-size: 24px;
+        margin-bottom: 8px;
         display: block;
       }
       .col-card-title {
         font-family: "Playfair Display", serif;
-        font-size: 20px;
+        font-size: clamp(16px, 1.8vw, 20px);
         color: var(--gold-light);
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
 
+      /* ── HERO ── */
+      .hero-content {
+        max-width: 820px;
+      }
+      .hero-tag {
+        display: inline-block;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 10px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        padding: 7px 18px;
+        border-radius: 2px;
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.3s forwards;
+      }
+      .hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(44px, 6.5vw, 94px);
+        font-weight: 900;
+        line-height: 1.04;
+        color: #fff;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.5s forwards;
+      }
+      .hero-title span {
+        color: var(--gold);
+        display: block;
+      }
+      .hero-meta {
+        margin-top: 18px;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.65s forwards;
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 2px;
+      }
+      .hero-presenters {
+        margin-top: 36px;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.75s forwards;
+        display: flex;
+        gap: 0;
+        flex-wrap: wrap;
+      }
+      .presenter-card {
+        padding: 16px 36px 16px 0;
+        border-top: 1px solid var(--border);
+      }
+      .presenter-label {
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 5px;
+      }
+      .presenter-name {
+        font-size: clamp(16px, 2vw, 22px);
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 0.5px;
+      }
+      .presenter-role {
+        font-size: 11px;
+        color: var(--gold);
+        margin-top: 3px;
+        letter-spacing: 1px;
+      }
+
+      /* ── QUOTE ── */
       .opinion-quote {
         font-family: "Playfair Display", serif;
-        font-size: clamp(20px, 2.6vw, 32px);
-        line-height: 1.55;
+        font-size: clamp(18px, 2.4vw, 30px);
+        line-height: 1.6;
         color: var(--text);
         border-left: 3px solid var(--gold);
-        padding-left: 30px;
+        padding-left: 28px;
         max-width: 700px;
       }
 
+      /* ── DISCUSSION BOX ── */
       .discussion-box {
         background: linear-gradient(
           135deg,
@@ -387,7 +460,7 @@
         );
         border: 1px solid var(--gold);
         border-radius: 18px;
-        padding: 36px;
+        padding: 32px;
         max-width: 720px;
         position: relative;
         overflow: hidden;
@@ -395,51 +468,254 @@
       .discussion-box::before {
         content: "?";
         position: absolute;
-        right: 24px;
-        bottom: -28px;
+        right: 20px;
+        bottom: -30px;
         font-family: "Playfair Display", serif;
-        font-size: 140px;
+        font-size: 130px;
         color: rgba(201, 168, 76, 0.06);
         font-weight: 900;
         line-height: 1;
       }
 
-      .presenter-tag {
-        position: fixed;
-        bottom: 80px;
-        right: 44px;
-        z-index: 100;
-        font-size: 11px;
-        letter-spacing: 2px;
-        color: var(--muted);
-        text-align: right;
-        transition: opacity 0.5s;
+      /* ── THANK YOU ── */
+      .thankyou-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(600px, 90vw);
+        height: min(600px, 90vw);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(201, 168, 76, 0.08) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
       }
-      .presenter-tag strong {
-        display: block;
+
+      /* ── PROS/CONS SPECIAL ── */
+      .pros-cons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 10px;
+      }
+      @media (max-width: 600px) {
+        .pros-cons {
+          grid-template-columns: 1fr;
+        }
+      }
+      .pros-card {
+        background: rgba(34, 197, 94, 0.06);
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .pros-card .col-card-title {
+        color: #6ee7b7;
+      }
+      .cons-card {
+        background: rgba(239, 68, 68, 0.06);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .cons-card .col-card-title {
+        color: #fca5a5;
+      }
+
+      /* ── TIMELINE ── */
+      .timeline {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .tl-item {
+        display: flex;
+        gap: 18px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .tl-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--gold-dim);
+        border: 1px solid var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+      .tl-text {
+        font-size: clamp(14px, 1.5vw, 17px);
+        color: var(--text);
+        line-height: 1.55;
+        padding-top: 7px;
+      }
+
+      /* ── DAILY LIFE GRID ── */
+      .life-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 10px;
+      }
+      @media (max-width: 500px) {
+        .life-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .life-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: clamp(13px, 1.4vw, 16px);
+        transition:
+          border-color 0.3s,
+          transform 0.3s;
+      }
+      .life-card:hover {
+        border-color: var(--gold);
+        transform: translateY(-2px);
+      }
+      .life-icon {
+        font-size: 26px;
+        flex-shrink: 0;
+      }
+
+      /* ── FUTURE CARDS ── */
+      .future-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-top: 10px;
+      }
+      @media (max-width: 500px) {
+        .future-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .future-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+      }
+      .future-card .f-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+      .future-card .f-label {
+        font-size: clamp(13px, 1.4vw, 16px);
+        color: var(--gold-light);
+      }
+
+      /* ── LANG CARD ── */
+      .lang-wrap {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .lang-stat {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .lang-flag {
+        font-size: 22px;
+      }
+      .lang-info {
+        flex: 1;
+      }
+      .lang-name {
+        font-size: clamp(14px, 1.5vw, 17px);
+        font-weight: 600;
         color: #fff;
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: 1px;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
+      }
+      .lang-desc {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .lang-bar-bg {
+        background: rgba(201, 168, 76, 0.12);
+        border-radius: 4px;
+        height: 4px;
+        margin-top: 6px;
+      }
+      .lang-bar {
+        height: 4px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, var(--gold), var(--gold-light));
       }
 
       @keyframes fadeUp {
         from {
           opacity: 0;
-          transform: translateY(26px);
+          transform: translateY(28px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
+
+      /* ── MOBILE ADJUSTMENTS ── */
+      @media (max-width: 768px) {
+        .slide {
+          padding: 60px 5vw 90px;
+        }
+        .brand {
+          top: 16px;
+          left: 20px;
+        }
+        .slide-counter {
+          top: 18px;
+          right: 20px;
+        }
+        .controls {
+          right: 20px;
+          bottom: 16px;
+        }
+        .key-hint {
+          display: none;
+        }
+        .presenter-tag {
+          right: 20px;
+          bottom: 66px;
+        }
+      }
+      @media (max-width: 480px) {
+        .hero-title {
+          font-size: clamp(34px, 10vw, 52px);
+        }
+        .hero-presenters {
+          flex-direction: column;
+        }
+        .presenter-card {
+          padding: 12px 0;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
-    <div class="progress-bar" id="progress"></div>
+    <div id="cursor"></div>
+    <div id="cursorRing"></div>
+    <div id="progress"></div>
     <canvas id="bgCanvas"></canvas>
     <div class="grid-bg"></div>
 
@@ -448,230 +724,783 @@
       <div class="brand-sub">IELTS Presentation</div>
     </div>
     <div class="slide-counter">
-      <span id="currentNum">01</span> / <span id="totalNum">10</span>
+      <span id="currentNum">01</span> / <span id="totalNum">15</span>
     </div>
     <div class="key-hint"><kbd>←</kbd> <kbd>→</kbd> navigate</div>
     <div class="presenter-tag" id="presenterTag"></div>
 
-    <!-- SLIDE 0 HERO -->
-    <div class="slide slide-hero active" id="slide-0">
-      <div class="hero-content">
-        <div class="hero-tag">IELTS Speaking Presentation</div>
-        <h1 class="hero-title">
-          How Globalisation<br /><span>Changed the World</span>
-        </h1>
-        <div class="hero-presenters">
-          <div class="presenter-card">
-            <div class="presenter-label">Presenter 1</div>
-            <div class="presenter-name">Abdullah Abid</div>
-            <div class="presenter-role">Introduction · Trade · Advantages</div>
+    <div class="slides-wrapper">
+      <!-- SLIDE 0 — HERO/TITLE -->
+      <div class="slide slide-hero active" id="slide-0">
+        <div class="hero-content">
+          <div class="hero-tag">
+            IELTS Speaking Presentation · 10 March 2026
           </div>
-          <div class="presenter-card">
-            <div class="presenter-label">Presenter 2</div>
-            <div class="presenter-name">Waqas</div>
-            <div class="presenter-role">Culture · Technology · Challenges</div>
+          <h1 class="hero-title">
+            How Globalisation<br /><span> Has Changed the World</span>
+          </h1>
+          <div class="hero-meta">
+            Course: IELTS Speaking &nbsp;|&nbsp; Date: 10 March 2026
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 1 INTRO -->
-    <div class="slide" id="slide-1">
-      <div class="slide-card">
-        <div class="slide-number">01 — Introduction</div>
-        <span class="slide-icon">📘</span>
-        <h2 class="slide-title">What is <em>Globalisation?</em></h2>
-        <p class="slide-text">
-          Globalisation is the process through which countries become more
-          deeply connected — via trade, technology, and communication. It allows
-          ideas, products, and cultures to travel across borders with
-          unprecedented speed and scale.
-        </p>
-      </div>
-    </div>
-
-    <!-- SLIDE 2 FACTS -->
-    <div class="slide" id="slide-2">
-      <div class="slide-card">
-        <div class="slide-number">02 — Key Facts</div>
-        <span class="slide-icon">📊</span>
-        <h2 class="slide-title"><em>Numbers</em> That Define Our Era</h2>
-        <ul class="vip-list">
-          <li>
-            International trade has expanded at an unprecedented pace over the
-            last 3 decades.
-          </li>
-          <li>
-            Over 5 billion people are now connected to the internet worldwide.
-          </li>
-          <li>
-            Multinational companies operate across dozens of countries
-            simultaneously.
-          </li>
-          <li>
-            News and information spreads globally within seconds of any event.
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SLIDE 3 TRADE -->
-    <div class="slide" id="slide-3">
-      <div class="slide-card">
-        <div class="slide-number">03 — Economy</div>
-        <span class="slide-icon">🚢</span>
-        <h2 class="slide-title">The Engine of <em>Global Trade</em></h2>
-        <ul class="vip-list">
-          <li>
-            Nations export and import goods, creating deep economic
-            interdependence.
-          </li>
-          <li>
-            Manufacturing now spans multiple countries — one product, many
-            borders.
-          </li>
-          <li>
-            Small businesses can now reach international customers via online
-            platforms.
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SLIDE 4 CULTURE -->
-    <div class="slide" id="slide-4">
-      <div class="slide-card">
-        <div class="slide-number">04 — Culture</div>
-        <span class="slide-icon">🎬</span>
-        <h2 class="slide-title">A World of <em>Cultural Exchange</em></h2>
-        <ul class="vip-list">
-          <li>
-            Movies, music, and fashion now cross borders and blend into hybrid
-            cultures.
-          </li>
-          <li>
-            People experience art and traditions from distant civilisations
-            every day.
-          </li>
-          <li>
-            Social media has become a powerful catalyst that accelerates
-            cultural sharing.
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SLIDE 5 TECH -->
-    <div class="slide" id="slide-5">
-      <div class="slide-card">
-        <div class="slide-number">05 — Technology</div>
-        <span class="slide-icon">💻</span>
-        <h2 class="slide-title">Technology &amp; <em>Communication</em></h2>
-        <ul class="vip-list">
-          <li>
-            The internet has connected billions of people across every continent
-            instantly.
-          </li>
-          <li>
-            Online businesses transcend borders and operate on a truly global
-            scale.
-          </li>
-          <li>
-            Remote work has made international collaboration a daily reality for
-            millions.
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SLIDE 6 ADVANTAGES -->
-    <div class="slide" id="slide-6">
-      <div class="slide-card">
-        <div class="slide-number">06 — Advantages</div>
-        <span class="slide-icon">📈</span>
-        <h2 class="slide-title">The <em>Benefits</em> of a Connected World</h2>
-        <div class="two-col">
-          <div class="col-card">
-            <span class="col-card-icon">💰</span>
-            <div class="col-card-title">Economic Growth</div>
-            <ul class="vip-list">
-              <li>Drives innovation and entrepreneurship worldwide</li>
-              <li>Creates millions of jobs across borders</li>
-            </ul>
-          </div>
-          <div class="col-card">
-            <span class="col-card-icon">🤝</span>
-            <div class="col-card-title">Global Cooperation</div>
-            <ul class="vip-list">
-              <li>Better access to global technology and ideas</li>
-              <li>Nations tackle shared problems together</li>
-            </ul>
+          <div class="hero-presenters">
+            <div class="presenter-card">
+              <div class="presenter-label">Presenter 1</div>
+              <div class="presenter-name">Abdullah Abid</div>
+              <div class="presenter-role">
+                Introduction · Trade · Advantages
+              </div>
+            </div>
+            <div class="presenter-card">
+              <div class="presenter-label">Presenter 2</div>
+              <div class="presenter-name">Waqas</div>
+              <div class="presenter-role">
+                Culture · Technology · Challenges
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- SLIDE 7 CHALLENGES -->
-    <div class="slide" id="slide-7">
-      <div class="slide-card">
-        <div class="slide-number">07 — Challenges</div>
-        <span class="slide-icon">⚠️</span>
-        <h2 class="slide-title">The <em>Challenges</em> We Must Face</h2>
-        <div class="two-col">
-          <div class="col-card">
-            <span class="col-card-icon">🏪</span>
-            <div class="col-card-title">Economic Pressure</div>
-            <ul class="vip-list">
-              <li>Intense competition hurts small local businesses</li>
-              <li>Growing inequality between rich and poor nations</li>
-            </ul>
-          </div>
-          <div class="col-card">
-            <span class="col-card-icon">🎭</span>
-            <div class="col-card-title">Cultural Identity</div>
-            <ul class="vip-list">
-              <li>Risk of losing unique local traditions and heritage</li>
-              <li>Dominant cultures can overshadow smaller ones</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 8 OPINION -->
-    <div class="slide" id="slide-8">
-      <div class="slide-card">
-        <div class="slide-number">08 — Our Opinion</div>
-        <span class="slide-icon">💡</span>
-        <h2 class="slide-title">Our <em>Perspective</em></h2>
-        <blockquote class="opinion-quote">
-          "Globalisation has woven the world closer together and unlocked
-          remarkable opportunities — yet nations must act with wisdom to protect
-          their cultures and build economic systems that are truly fair for
-          all."
-        </blockquote>
-      </div>
-    </div>
-
-    <!-- SLIDE 9 DISCUSSION -->
-    <div class="slide" id="slide-9">
-      <div class="slide-card">
-        <div class="slide-number">09 — Discussion</div>
-        <div class="discussion-box">
-          <span class="slide-icon">❓</span>
-          <h2 class="slide-title" style="font-size: clamp(28px, 3vw, 44px)">
-            Open <em>Discussion</em>
-          </h2>
+      <!-- SLIDE 1 — INTRODUCTION -->
+      <div class="slide" id="slide-1">
+        <div class="slide-card">
+          <div class="slide-number">01 — Introduction</div>
+          <span class="slide-icon">📘</span>
+          <h2 class="slide-title">What is <em>Globalisation?</em></h2>
           <p class="slide-text">
-            Do you believe globalisation genuinely benefits developing
-            countries?
+            Globalisation is the process through which countries become more
+            connected through trade, technology, communication, and culture. It
+            allows goods, services, information, and ideas to move easily across
+            borders.
           </p>
-          <p style="font-size: 18px; color: var(--muted); margin-top: 18px">
-            Share your opinion and support it with real examples.
+          <p
+            style="
+              margin-top: 18px;
+              font-size: 13px;
+              letter-spacing: 3px;
+              color: var(--gold);
+              text-transform: uppercase;
+            "
+          >
+            Why it matters:
+          </p>
+          <ul class="vip-list" style="margin-top: 6px">
+            <li>It affects economies worldwide</li>
+            <li>It influences culture and traditions</li>
+            <li>It changes how people communicate and work</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 — HISTORY -->
+      <div class="slide" id="slide-2">
+        <div class="slide-card">
+          <div class="slide-number">02 — History</div>
+          <span class="slide-icon">🗺️</span>
+          <h2 class="slide-title">How Globalisation <em>Started</em></h2>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot">🐪</div>
+              <div class="tl-text">
+                <strong style="color: #fff">Silk Road Era</strong> — Trade
+                routes like the Silk Road connected Asia and Europe centuries
+                ago, enabling exchange of goods and culture.
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot">⚙️</div>
+              <div class="tl-text">
+                <strong style="color: #fff">Industrial Revolution</strong> —
+                Mass production and steam engines dramatically increased
+                international trade and economic links.
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot">🌐</div>
+              <div class="tl-text">
+                <strong style="color: #fff"
+                  >Modern Technology & Internet</strong
+                >
+                — Digital communication and the internet accelerated
+                globalisation to an unprecedented pace.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 — GLOBAL TRADE -->
+      <div class="slide" id="slide-3">
+        <div class="slide-card">
+          <div class="slide-number">03 — Economy</div>
+          <span class="slide-icon">🚢</span>
+          <h2 class="slide-title">
+            Globalisation &amp; <em>International Trade</em>
+          </h2>
+          <p class="slide-text" style="margin-bottom: 16px">
+            Countries exchange products and services across the world. Trade
+            allows countries to specialise and grow economically.
+          </p>
+          <div class="two-col">
+            <div class="col-card">
+              <span class="col-card-icon">🏭</span>
+              <div class="col-card-title">Exports by Country</div>
+              <ul class="vip-list">
+                <li>China manufactures electronics</li>
+                <li>Middle East exports oil</li>
+                <li>Europe produces cars</li>
+                <li>Pakistan exports textiles</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">📦</span>
+              <div class="col-card-title">How Trade Works</div>
+              <ul class="vip-list">
+                <li>
+                  Nations export and import goods creating deep economic
+                  interdependence
+                </li>
+                <li>
+                  Manufacturing spans multiple countries — one product, many
+                  borders
+                </li>
+                <li>Small businesses reach global customers online</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 — TECHNOLOGY -->
+      <div class="slide" id="slide-4">
+        <div class="slide-card" style="max-width: 1100px">
+          <div class="slide-number">04 — Technology</div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 28px;
+              align-items: stretch;
+              min-height: 420px;
+            "
+          >
+            <div>
+              <span class="slide-icon">💻</span>
+              <h2 class="slide-title">
+                Technology <em>Connecting</em> the World
+              </h2>
+              <p
+                class="slide-text"
+                style="font-size: clamp(16px, 1.9vw, 22px); margin-bottom: 18px"
+              >
+                Modern technology has made globalisation faster than ever
+                before.
+              </p>
+              <ul class="vip-list">
+                <li
+                  style="font-size: clamp(15px, 1.8vw, 20px); padding: 13px 0"
+                >
+                  The internet connects billions of people across every
+                  continent instantly
+                </li>
+                <li
+                  style="font-size: clamp(15px, 1.8vw, 20px); padding: 13px 0"
+                >
+                  Social media spreads information and news around the world
+                  within seconds
+                </li>
+                <li
+                  style="font-size: clamp(15px, 1.8vw, 20px); padding: 13px 0"
+                >
+                  Online meetings allow seamless international collaboration
+                  daily
+                </li>
+                <li
+                  style="font-size: clamp(15px, 1.8vw, 20px); padding: 13px 0"
+                >
+                  Businesses operate on a truly global scale across borders
+                </li>
+              </ul>
+            </div>
+            <div
+              style="
+                border-radius: 14px;
+                border: 1px solid var(--border);
+                background: rgba(255, 255, 255, 0.03);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <a
+                href="https://youtube.com/shorts/OJF7xkjtTl8"
+                target="_blank"
+                style="
+                  text-decoration: none;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  gap: 18px;
+                "
+              >
+                <div
+                  style="
+                    width: 90px;
+                    height: 90px;
+                    border-radius: 50%;
+                    background: var(--gold);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow:
+                      0 0 40px rgba(201, 168, 76, 0.5),
+                      0 0 80px rgba(201, 168, 76, 0.2);
+                    transition:
+                      transform 0.3s,
+                      box-shadow 0.3s;
+                  "
+                  onmouseover="
+                    this.style.transform = 'scale(1.12)';
+                    this.style.boxShadow =
+                      '0 0 60px rgba(201,168,76,.7),0 0 120px rgba(201,168,76,.3)';
+                  "
+                  onmouseout="
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow =
+                      '0 0 40px rgba(201,168,76,.5),0 0 80px rgba(201,168,76,.2)';
+                  "
+                >
+                  <svg
+                    width="36"
+                    height="36"
+                    viewBox="0 0 24 24"
+                    fill="#06080f"
+                  >
+                    <polygon points="5,3 19,12 5,21" />
+                  </svg>
+                </div>
+                <span
+                  style="
+                    font-size: 13px;
+                    letter-spacing: 3px;
+                    text-transform: uppercase;
+                    color: var(--gold);
+                    font-family: &quot;DM Sans&quot;, sans-serif;
+                  "
+                  >Watch Video</span
+                >
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 — CULTURE -->
+      <div class="slide" id="slide-5">
+        <div class="slide-card">
+          <div class="slide-number">05 — Culture</div>
+          <span class="slide-icon">🎬</span>
+          <h2 class="slide-title">
+            Globalisation &amp; <em>Cultural Exchange</em>
+          </h2>
+          <p class="slide-text" style="margin-bottom: 16px">
+            Globalisation spreads culture across the world, creating rich blends
+            of traditions.
+          </p>
+          <ul class="vip-list">
+            <li>Korean music (K-Pop) and movies are loved worldwide</li>
+            <li>American movies are watched in every corner of the globe</li>
+            <li>International food is available in cities of every country</li>
+            <li>Fashion trends spread online within hours</li>
+          </ul>
+          <div
+            style="
+              margin-top: 18px;
+              background: var(--card-bg);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              padding: 16px 20px;
+              max-width: 500px;
+            "
+          >
+            <p
+              style="
+                font-size: 12px;
+                letter-spacing: 2px;
+                color: var(--gold);
+                text-transform: uppercase;
+                margin-bottom: 6px;
+              "
+            >
+              💡 Video Idea
+            </p>
+            <p style="font-size: 14px; color: var(--muted)">
+              Short video about global culture / food diversity (for this slide)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 — LANGUAGE -->
+      <div class="slide" id="slide-6">
+        <div class="slide-card">
+          <div class="slide-number">06 — Language</div>
+          <span class="slide-icon">🗣️</span>
+          <h2 class="slide-title">Globalisation &amp; <em>Languages</em></h2>
+          <p class="slide-text" style="margin-bottom: 16px">
+            Some languages spread globally due to globalisation, reshaping
+            communication.
+          </p>
+          <div class="lang-wrap">
+            <div class="lang-stat">
+              <span class="lang-flag">🇬🇧</span>
+              <div class="lang-info">
+                <div class="lang-name">English</div>
+                <div class="lang-desc">
+                  Becoming the dominant international language for business,
+                  science &amp; diplomacy
+                </div>
+                <div class="lang-bar-bg">
+                  <div class="lang-bar" style="width: 92%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="lang-stat">
+              <span class="lang-flag">🌍</span>
+              <div class="lang-info">
+                <div class="lang-name">Foreign Language Learning</div>
+                <div class="lang-desc">
+                  People learning languages like Mandarin, Spanish &amp; Arabic
+                  for work opportunities
+                </div>
+                <div class="lang-bar-bg">
+                  <div class="lang-bar" style="width: 70%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="lang-stat">
+              <span class="lang-flag">🤝</span>
+              <div class="lang-info">
+                <div class="lang-name">Global Communication</div>
+                <div class="lang-desc">
+                  Common languages make international cooperation and business
+                  far easier
+                </div>
+                <div class="lang-bar-bg">
+                  <div class="lang-bar" style="width: 85%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 — ADVANTAGES -->
+      <div class="slide" id="slide-7">
+        <div class="slide-card">
+          <div class="slide-number">07 — Advantages</div>
+          <span class="slide-icon">📈</span>
+          <h2 class="slide-title">
+            The <em>Benefits</em> of a Connected World
+          </h2>
+          <p class="slide-text" style="margin-bottom: 16px">
+            Globalisation has improved living standards in many countries.
+          </p>
+          <div class="two-col">
+            <div class="col-card">
+              <span class="col-card-icon">💰</span>
+              <div class="col-card-title">Economic Growth</div>
+              <ul class="vip-list">
+                <li>Drives innovation and entrepreneurship</li>
+                <li>Creates millions of jobs across borders</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">🤝</span>
+              <div class="col-card-title">Global Cooperation</div>
+              <ul class="vip-list">
+                <li>Better access to global technology &amp; ideas</li>
+                <li>Nations tackle shared problems together</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">🌐</span>
+              <div class="col-card-title">Access to Technology</div>
+              <ul class="vip-list">
+                <li>Developing nations access advanced tech</li>
+                <li>Digital tools reach remote areas</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">💼</span>
+              <div class="col-card-title">Global Job Opportunities</div>
+              <ul class="vip-list">
+                <li>Remote work opens international roles</li>
+                <li>Skilled workers find jobs worldwide</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 — DISADVANTAGES -->
+      <div class="slide" id="slide-8">
+        <div class="slide-card">
+          <div class="slide-number">08 — Challenges</div>
+          <span class="slide-icon">⚠️</span>
+          <h2 class="slide-title">The <em>Challenges</em> We Must Face</h2>
+          <div class="two-col">
+            <div class="col-card">
+              <span class="col-card-icon">🏪</span>
+              <div class="col-card-title">Economic Pressure</div>
+              <ul class="vip-list">
+                <li>Local businesses struggle against global companies</li>
+                <li>Economic inequality between rich and poor nations grows</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">🎭</span>
+              <div class="col-card-title">Cultural Identity</div>
+              <ul class="vip-list">
+                <li>Risk of losing unique local traditions and heritage</li>
+                <li>Dominant cultures overshadow smaller ones</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">🌿</span>
+              <div class="col-card-title">Environment</div>
+              <ul class="vip-list">
+                <li>Environmental issues due to industrial growth</li>
+                <li>Carbon emissions from global shipping</li>
+              </ul>
+            </div>
+            <div class="col-card">
+              <span class="col-card-icon">🧑‍💼</span>
+              <div class="col-card-title">Job Displacement</div>
+              <ul class="vip-list">
+                <li>Automation replaces traditional jobs</li>
+                <li>Factory jobs move to cheaper countries</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9 — PROS VS CONS -->
+      <div class="slide" id="slide-9">
+        <div class="slide-card">
+          <div class="slide-number">09 — Pros vs Cons</div>
+          <span class="slide-icon">⚖️</span>
+          <h2 class="slide-title">Globalisation: <em>Pros &amp; Cons</em></h2>
+          <div class="pros-cons">
+            <div class="pros-card col-card">
+              <span class="col-card-icon">✅</span>
+              <div class="col-card-title">Pros</div>
+              <ul class="vip-list">
+                <li>Economic development &amp; growth</li>
+                <li>Innovation and new technologies</li>
+                <li>Easier global communication</li>
+                <li>Cultural exchange and diversity</li>
+              </ul>
+            </div>
+            <div class="cons-card col-card">
+              <span class="col-card-icon">❌</span>
+              <div class="col-card-title">Cons</div>
+              <ul class="vip-list">
+                <li>Cultural loss and homogenisation</li>
+                <li>Job displacement in some sectors</li>
+                <li>Economic imbalance between nations</li>
+                <li>Environmental degradation</li>
+              </ul>
+            </div>
+          </div>
+          <p
+            style="
+              margin-top: 20px;
+              font-size: clamp(14px, 1.5vw, 17px);
+              color: var(--muted);
+              border-top: 1px solid var(--border);
+              padding-top: 16px;
+            "
+          >
+            Countries must balance these effects through smart policy and
+            international cooperation.
           </p>
         </div>
       </div>
+
+      <!-- SLIDE 10 — DAILY LIFE -->
+      <div class="slide" id="slide-10">
+        <div class="slide-card">
+          <div class="slide-number">10 — Daily Life</div>
+          <span class="slide-icon">🌍</span>
+          <h2 class="slide-title">How It <em>Affects Our Lives</em></h2>
+          <p class="slide-text" style="margin-bottom: 16px">
+            We experience globalisation every single day — often without
+            realising it.
+          </p>
+          <div class="life-grid">
+            <div class="life-card">
+              <span class="life-icon">📱</span> Using smartphones manufactured
+              in other countries
+            </div>
+            <div class="life-card">
+              <span class="life-icon">🎬</span> Watching international movies
+              and TV shows
+            </div>
+            <div class="life-card">
+              <span class="life-icon">🍜</span> Eating food from different
+              cultures daily
+            </div>
+            <div class="life-card">
+              <span class="life-icon">🛒</span> Buying products online from
+              abroad
+            </div>
+            <div class="life-card">
+              <span class="life-icon">👗</span> Wearing fashion trends from
+              global brands
+            </div>
+            <div class="life-card">
+              <span class="life-icon">🎵</span> Listening to music from every
+              corner of the world
+            </div>
+          </div>
+          <div
+            style="
+              margin-top: 16px;
+              background: var(--card-bg);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              padding: 14px 18px;
+              max-width: 500px;
+            "
+          >
+            <p
+              style="
+                font-size: 12px;
+                letter-spacing: 2px;
+                color: var(--gold);
+                text-transform: uppercase;
+                margin-bottom: 5px;
+              "
+            >
+              💡 Video Idea
+            </p>
+            <p style="font-size: 13px; color: var(--muted)">
+              Short video about globalisation in daily life (30–40 sec)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 11 — FUTURE -->
+      <div class="slide" id="slide-11">
+        <div class="slide-card">
+          <div class="slide-number">11 — Future</div>
+          <span class="slide-icon">🚀</span>
+          <h2 class="slide-title">Future of <em>Globalisation</em></h2>
+          <p class="slide-text" style="margin-bottom: 18px">
+            Globalisation will continue growing and shaping our world through
+            new technologies.
+          </p>
+          <div class="future-grid">
+            <div class="future-card">
+              <div class="f-icon">🤖</div>
+              <div class="f-label">Artificial Intelligence</div>
+            </div>
+            <div class="future-card">
+              <div class="f-icon">💸</div>
+              <div class="f-label">Digital Economy</div>
+            </div>
+            <div class="future-card">
+              <div class="f-icon">🏠</div>
+              <div class="f-label">Remote Work</div>
+            </div>
+            <div class="future-card">
+              <div class="f-icon">📚</div>
+              <div class="f-label">Global Online Education</div>
+            </div>
+          </div>
+          <p
+            style="
+              margin-top: 20px;
+              font-size: clamp(14px, 1.5vw, 17px);
+              color: var(--muted);
+              border-top: 1px solid var(--border);
+              padding-top: 16px;
+            "
+          >
+            The world will become even more interconnected — the question is how
+            we manage it wisely.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 12 — OPINION -->
+      <div class="slide" id="slide-12">
+        <div class="slide-card">
+          <div class="slide-number">12 — Our Opinion</div>
+          <span class="slide-icon">💡</span>
+          <h2 class="slide-title">Our <em>Perspective</em></h2>
+          <blockquote class="opinion-quote">
+            "Globalisation has woven the world closer together and unlocked
+            remarkable opportunities — yet nations must act with wisdom to
+            protect their cultures and build economic systems that are truly
+            fair for all."
+          </blockquote>
+          <p
+            style="
+              margin-top: 24px;
+              font-size: 13px;
+              letter-spacing: 3px;
+              color: var(--gold);
+              text-transform: uppercase;
+            "
+          >
+            We believe countries should:
+          </p>
+          <ul class="vip-list" style="margin-top: 6px">
+            <li>Protect and celebrate their culture and heritage</li>
+            <li>Support local industries alongside global trade</li>
+            <li>Encourage genuine international cooperation</li>
+          </ul>
+          <p
+            style="
+              margin-top: 16px;
+              font-size: clamp(14px, 1.5vw, 17px);
+              color: var(--muted);
+            "
+          >
+            Balanced globalisation can truly improve the world.
+          </p>
+        </div>
+      </div>
+
+      <!-- SLIDE 13 — DISCUSSION -->
+      <div class="slide" id="slide-13">
+        <div class="slide-card">
+          <div class="slide-number">13 — Discussion</div>
+          <div class="discussion-box">
+            <span class="slide-icon">❓</span>
+            <h2 class="slide-title" style="font-size: clamp(24px, 3vw, 42px)">
+              Open <em>Discussion</em>
+            </h2>
+            <p class="slide-text">
+              Do you think globalisation benefits developing countries?
+            </p>
+            <p
+              style="
+                font-size: clamp(16px, 1.8vw, 20px);
+                color: var(--gold);
+                margin-top: 10px;
+                font-family: &quot;Playfair Display&quot;, serif;
+                font-style: italic;
+              "
+            >
+              Why or why not?
+            </p>
+            <p
+              style="
+                font-size: clamp(13px, 1.4vw, 16px);
+                color: var(--muted);
+                margin-top: 14px;
+              "
+            >
+              Share your opinion with real examples from countries you know.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 14 — THANK YOU -->
+      <div class="slide slide-hero" id="slide-14">
+        <div class="thankyou-glow"></div>
+        <div
+          class="hero-content"
+          style="
+            text-align: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          "
+        >
+          <div
+            class="hero-tag"
+            style="animation: fadeUp 0.8s 0.2s forwards; opacity: 0"
+          >
+            IELTS Speaking · 10 March 2026
+          </div>
+          <h1
+            class="hero-title"
+            style="
+              text-align: center;
+              animation: fadeUp 0.8s 0.4s forwards;
+              opacity: 0;
+            "
+          >
+            Thank You<br /><span>for Listening</span>
+          </h1>
+          <p
+            style="
+              margin-top: 20px;
+              font-size: clamp(15px, 1.8vw, 20px);
+              color: var(--muted);
+              opacity: 0;
+              animation: fadeUp 0.8s 0.6s forwards;
+            "
+          >
+            We appreciate your attention.
+          </p>
+          <p
+            style="
+              margin-top: 10px;
+              font-family: &quot;Playfair Display&quot;, serif;
+              font-size: clamp(20px, 2.5vw, 32px);
+              color: var(--gold);
+              opacity: 0;
+              animation: fadeUp 0.8s 0.75s forwards;
+            "
+          >
+            Any questions?
+          </p>
+          <div
+            style="
+              margin-top: 40px;
+              display: flex;
+              gap: 32px;
+              opacity: 0;
+              animation: fadeUp 0.8s 0.9s forwards;
+              flex-wrap: wrap;
+              justify-content: center;
+            "
+          >
+            <div style="text-align: center">
+              <div style="font-size: 14px; font-weight: 700; color: #fff">
+                Abdullah Abid
+              </div>
+              <div
+                style="font-size: 11px; color: var(--gold); letter-spacing: 2px"
+              >
+                PRESENTER 1
+              </div>
+            </div>
+            <div style="width: 1px; background: var(--border)"></div>
+            <div style="text-align: center">
+              <div style="font-size: 14px; font-weight: 700; color: #fff">
+                Waqas
+              </div>
+              <div
+                style="font-size: 11px; color: var(--gold); letter-spacing: 2px"
+              >
+                PRESENTER 2
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- end slides-wrapper -->
 
     <div class="slide-dots" id="dots"></div>
     <div class="controls">
@@ -683,14 +1512,19 @@
       const slideConfig = [
         { presenter: null, section: "", bg: "hero" },
         { presenter: "Abdullah Abid", section: "Introduction", bg: "globe" },
-        { presenter: "Abdullah Abid", section: "Key Facts", bg: "network" },
+        { presenter: "Abdullah Abid", section: "History", bg: "network" },
         { presenter: "Abdullah Abid", section: "Global Trade", bg: "ocean" },
-        { presenter: "Waqas", section: "Culture", bg: "culture" },
         { presenter: "Waqas", section: "Technology", bg: "tech" },
+        { presenter: "Waqas", section: "Culture", bg: "culture" },
+        { presenter: "Waqas", section: "Language", bg: "gold" },
         { presenter: "Abdullah Abid", section: "Advantages", bg: "growth" },
         { presenter: "Waqas", section: "Challenges", bg: "storm" },
+        { presenter: "Both", section: "Pros vs Cons", bg: "discuss" },
+        { presenter: "Both", section: "Daily Life", bg: "culture" },
+        { presenter: "Both", section: "Future", bg: "tech" },
         { presenter: "Both", section: "Our Opinion", bg: "gold" },
         { presenter: "Both", section: "Discussion", bg: "discuss" },
+        { presenter: "Both", section: "Thank You", bg: "hero" },
       ];
 
       const slides = document.querySelectorAll(".slide");
@@ -727,10 +1561,9 @@
         }
         setBg(cfg.bg);
       }
-
       function goTo(n) {
-        const prev = current;
-        const next = (n + totalSlides) % totalSlides;
+        const prev = current,
+          next = (n + totalSlides) % totalSlides;
         if (prev === next) return;
         slides[prev].classList.remove("active");
         slides[prev].classList.add("exit");
@@ -749,35 +1582,51 @@
         if (e.key === "ArrowRight") nextSlide();
         if (e.key === "ArrowLeft") prevSlide();
       });
+      // Touch swipe
+      let tx = 0;
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          tx = e.touches[0].clientX;
+        },
+        { passive: true },
+      );
+      document.addEventListener(
+        "touchend",
+        (e) => {
+          const dx = e.changedTouches[0].clientX - tx;
+          if (Math.abs(dx) > 50) {
+            dx < 0 ? nextSlide() : prevSlide();
+          }
+        },
+        { passive: true },
+      );
 
-      // ── CANVAS BACKGROUND ENGINE ──
-      const canvas = document.getElementById("bgCanvas");
-      const ctx = canvas.getContext("2d");
+      // ── CANVAS ENGINE ──
+      const canvas = document.getElementById("bgCanvas"),
+        ctx = canvas.getContext("2d");
       let W,
         H,
-        bgMode = "hero";
-      let particles = [];
-
+        bgMode = "hero",
+        particles = [];
       function resize() {
         W = canvas.width = innerWidth;
         H = canvas.height = innerHeight;
       }
       resize();
       window.addEventListener("resize", resize);
-
       function makeP(mode) {
         return {
           x: Math.random() * W,
           y: Math.random() * H,
           vx: (Math.random() - 0.5) * 0.5,
           vy: (Math.random() - 0.5) * 0.5,
-          r: Math.random() * 2 + 0.5,
+          r: Math.random() * 2 + 0.4,
           life: Math.random(),
           decay: Math.random() * 0.002 + 0.001,
           mode,
         };
       }
-
       function setBg(mode) {
         bgMode = mode;
         const n =
@@ -795,7 +1644,6 @@
           }[mode] || 50;
         particles = Array.from({ length: n }, () => makeP(mode));
       }
-
       const PAL = {
         hero: ["rgba(201,168,76,", "rgba(240,208,128,"],
         globe: ["rgba(56,189,248,", "rgba(14,165,233,"],
@@ -808,17 +1656,14 @@
         gold: ["rgba(201,168,76,", "rgba(253,224,71,"],
         discuss: ["rgba(251,191,36,", "rgba(245,158,11,"],
       };
-
       let t = 0;
       function loop() {
         t++;
         ctx.clearRect(0, 0, W, H);
         const mode = bgMode;
-
         if (mode === "hero") {
           ctx.fillStyle = "rgba(6,8,15,1)";
           ctx.fillRect(0, 0, W, H);
-          // Soft glow left
           const g = ctx.createRadialGradient(
             W * 0.1,
             H * 0.4,
@@ -836,7 +1681,7 @@
           ctx.fillRect(0, 0, W, H);
           ctx.save();
           ctx.translate(W * 0.73, H * 0.5);
-          const R = H * 0.4;
+          const R = H * 0.38;
           const grd = ctx.createRadialGradient(-R * 0.2, -R * 0.2, 0, 0, 0, R);
           grd.addColorStop(0, "rgba(56,189,248,.1)");
           grd.addColorStop(1, "transparent");
@@ -917,29 +1762,15 @@
             ctx.lineWidth = 1.4;
             ctx.stroke();
           }
-          // Dotted shipping route
-          for (let x = 0; x < W; x += W / 10) {
-            ctx.beginPath();
-            ctx.arc(
-              x,
-              H * 0.5 + Math.sin(t * 0.002 + x * 0.01) * 15,
-              2.5,
-              0,
-              Math.PI * 2,
-            );
-            ctx.fillStyle = "rgba(6,182,212,.25)";
-            ctx.fill();
-          }
         } else if (mode === "culture") {
           ctx.fillStyle = "rgba(8,4,14,1)";
           ctx.fillRect(0, 0, W, H);
-          const cols = [
+          [
             "rgba(244,114,182,.08)",
             "rgba(251,191,36,.07)",
             "rgba(99,102,241,.07)",
             "rgba(34,197,94,.07)",
-          ];
-          cols.forEach((c, i) => {
+          ].forEach((c, i) => {
             const cx = W * (0.15 + 0.7 * (i / 3)),
               cy = H * 0.5 + Math.sin(t * 0.0015 + i) * 28;
             const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, H * 0.38);
@@ -948,21 +1779,10 @@
             ctx.fillStyle = rg;
             ctx.fillRect(0, 0, W, H);
           });
-          // Rotating cultural ring
-          ctx.save();
-          ctx.translate(W * 0.75, H * 0.5);
-          ctx.rotate(t * 0.002);
-          ctx.beginPath();
-          ctx.arc(0, 0, H * 0.3, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(244,114,182,.06)";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-          ctx.restore();
         } else if (mode === "tech") {
           ctx.fillStyle = "rgba(3,4,16,1)";
           ctx.fillRect(0, 0, W, H);
-          // Circuit lines
-          const lines = [
+          [
             [0.1, 0.2, 0.9, 0.2],
             [0.1, 0.4, 0.6, 0.4],
             [0.4, 0.4, 0.4, 0.7],
@@ -970,25 +1790,21 @@
             [0.6, 0.6, 0.9, 0.6],
             [0.2, 0.6, 0.4, 0.6],
             [0.2, 0.2, 0.2, 0.6],
-          ];
-          lines.forEach(([x1, y1, x2, y2]) => {
+          ].forEach(([x1, y1, x2, y2]) => {
             ctx.beginPath();
             ctx.moveTo(W * x1, H * y1);
             ctx.lineTo(W * x2, H * y2);
             ctx.strokeStyle = "rgba(56,189,248,.07)";
             ctx.lineWidth = 1.2;
             ctx.stroke();
-            // Node dots
             ctx.beginPath();
             ctx.arc(W * x2, H * y2, 3, 0, Math.PI * 2);
             ctx.fillStyle = "rgba(99,102,241,.35)";
             ctx.fill();
           });
-          // Scan line
           const scanY = (t * 0.28) % H;
           ctx.fillStyle = "rgba(56,189,248,.04)";
           ctx.fillRect(0, scanY - 1, W, 3);
-          // Pulse
           ctx.beginPath();
           ctx.arc(W * 0.5, H * 0.5, (t * 1.5) % 150, 0, Math.PI * 2);
           ctx.strokeStyle = "rgba(99,102,241,.04)";
@@ -997,23 +1813,21 @@
         } else if (mode === "growth") {
           ctx.fillStyle = "rgba(3,9,5,1)";
           ctx.fillRect(0, 0, W, H);
-          const bars = 12;
-          for (let i = 0; i < bars; i++) {
+          for (let i = 0; i < 12; i++) {
             const bh =
               H *
-              (0.08 + 0.55 * (i / bars) * (1 + Math.sin(t * 0.002 + i) * 0.04));
-            const x = W * (i / bars + 0.04);
+              (0.08 + 0.55 * (i / 12) * (1 + Math.sin(t * 0.002 + i) * 0.04));
+            const x = W * (i / 12 + 0.04);
             const g = ctx.createLinearGradient(x, H - bh, x, H);
             g.addColorStop(0, `rgba(34,197,94,${0.08 + i * 0.015})`);
-            g.addColorStop(1, `rgba(16,185,129,.02)`);
+            g.addColorStop(1, "rgba(16,185,129,.02)");
             ctx.fillStyle = g;
-            ctx.fillRect(x, H - bh, W / bars - 10, bh);
+            ctx.fillRect(x, H - bh, W / 12 - 10, bh);
           }
-          // Trend line
           ctx.beginPath();
           ctx.moveTo(W * 0.04, H * 0.85);
-          for (let i = 0; i < bars; i++)
-            ctx.lineTo(W * (i / bars + 0.08), H * (0.85 - i * 0.06));
+          for (let i = 0; i < 12; i++)
+            ctx.lineTo(W * (i / 12 + 0.08), H * (0.85 - i * 0.06));
           ctx.strokeStyle = "rgba(34,197,94,.2)";
           ctx.lineWidth = 2;
           ctx.stroke();
@@ -1028,7 +1842,6 @@
             ctx.lineWidth = 1.8;
             ctx.stroke();
           }
-          // Warning diagonals
           for (let i = 0; i < 3; i++) {
             ctx.beginPath();
             ctx.moveTo(W * (0.2 + i * 0.3), 0);
@@ -1053,7 +1866,6 @@
           gg.addColorStop(1, "transparent");
           ctx.fillStyle = gg;
           ctx.fillRect(0, 0, W, H);
-          // Rotating star-like lines
           ctx.save();
           ctx.translate(W * 0.75, H * 0.5);
           ctx.rotate(t * 0.001);
@@ -1070,13 +1882,12 @@
           ctx.fillStyle = "rgba(6,6,10,1)";
           ctx.fillRect(0, 0, W, H);
           ctx.save();
-          ctx.font = `bold ${H * 0.65}px serif`;
+          ctx.font = `bold ${H * 0.6}px serif`;
           ctx.fillStyle = "rgba(201,168,76,.04)";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText("?", W * 0.78, H * 0.55);
           ctx.restore();
-          // Conversation bubbles
           [
             [0.2, 0.3, 80],
             [0.35, 0.55, 60],
@@ -1090,7 +1901,6 @@
           });
         }
 
-        // Particles
         particles.forEach((p) => {
           p.x += p.vx;
           p.y += p.vy;
@@ -1110,7 +1920,6 @@
           ctx.fillStyle = pal[0] + p.life * 0.22 + ")";
           ctx.fill();
         });
-
         requestAnimationFrame(loop);
       }
       loop();
