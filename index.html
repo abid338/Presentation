@@ -36,8 +36,6 @@
         font-family: "DM Sans", sans-serif;
         cursor: none;
       }
-
-      /* ── CURSOR ── */
       #cursor {
         width: 9px;
         height: 9px;
@@ -65,8 +63,6 @@
       body:hover #cursor {
         transform: translate(-50%, -50%) scale(1);
       }
-
-      /* ── PROGRESS ── */
       #progress {
         position: fixed;
         top: 0;
@@ -77,8 +73,6 @@
         transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
         box-shadow: 0 0 14px var(--gold);
       }
-
-      /* ── CANVAS + GRID ── */
       #bgCanvas {
         position: fixed;
         inset: 0;
@@ -95,8 +89,6 @@
           linear-gradient(90deg, rgba(201, 168, 76, 0.025) 1px, transparent 1px);
         background-size: 64px 64px;
       }
-
-      /* ── HEADER BRAND ── */
       .brand {
         position: fixed;
         top: 22px;
@@ -116,8 +108,6 @@
         text-transform: uppercase;
         margin-top: 2px;
       }
-
-      /* ── COUNTER ── */
       .slide-counter {
         position: fixed;
         top: 26px;
@@ -130,8 +120,6 @@
       .slide-counter span {
         color: var(--gold);
       }
-
-      /* ── PRESENTER TAG ── */
       .presenter-tag {
         position: fixed;
         bottom: 72px;
@@ -151,8 +139,6 @@
         letter-spacing: 1px;
         margin-bottom: 2px;
       }
-
-      /* ── BOTTOM NAV ── */
       .key-hint {
         position: fixed;
         bottom: 28px;
@@ -225,15 +211,11 @@
         border-color: var(--gold);
         transform: scale(1.1);
       }
-
-      /* ── SLIDES WRAPPER ── */
       .slides-wrapper {
         position: fixed;
         inset: 0;
         z-index: 1;
       }
-
-      /* ── SLIDE BASE ── */
       .slide {
         position: absolute;
         inset: 0;
@@ -269,8 +251,6 @@
       .slide-hero {
         align-items: center;
       }
-
-      /* ── SLIDE CONTENT CARD ── */
       .slide-card {
         max-width: 920px;
         width: 100%;
@@ -308,8 +288,6 @@
         color: var(--text);
         max-width: 680px;
       }
-
-      /* ── LISTS ── */
       .vip-list {
         list-style: none;
         margin-top: 4px;
@@ -338,8 +316,6 @@
         margin-top: 5px;
         flex-shrink: 0;
       }
-
-      /* ── TWO COLS ── */
       .two-col {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -369,8 +345,6 @@
         color: var(--gold-light);
         margin-bottom: 8px;
       }
-
-      /* ── HERO ── */
       .hero-content {
         max-width: 820px;
       }
@@ -439,8 +413,6 @@
         margin-top: 3px;
         letter-spacing: 1px;
       }
-
-      /* ── QUOTE ── */
       .opinion-quote {
         font-family: "Playfair Display", serif;
         font-size: clamp(18px, 2.4vw, 30px);
@@ -450,8 +422,6 @@
         padding-left: 28px;
         max-width: 700px;
       }
-
-      /* ── DISCUSSION BOX ── */
       .discussion-box {
         background: linear-gradient(
           135deg,
@@ -476,8 +446,6 @@
         font-weight: 900;
         line-height: 1;
       }
-
-      /* ── THANK YOU ── */
       .thankyou-glow {
         position: absolute;
         top: 50%;
@@ -493,8 +461,6 @@
         );
         pointer-events: none;
       }
-
-      /* ── PROS/CONS SPECIAL ── */
       .pros-cons {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -524,8 +490,6 @@
       .cons-card .col-card-title {
         color: #fca5a5;
       }
-
-      /* ── TIMELINE ── */
       .timeline {
         margin-top: 8px;
         display: flex;
@@ -556,8 +520,6 @@
         line-height: 1.55;
         padding-top: 7px;
       }
-
-      /* ── DAILY LIFE GRID ── */
       .life-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -590,8 +552,6 @@
         font-size: 26px;
         flex-shrink: 0;
       }
-
-      /* ── FUTURE CARDS ── */
       .future-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -618,8 +578,6 @@
         font-size: clamp(13px, 1.4vw, 16px);
         color: var(--gold-light);
       }
-
-      /* ── LANG CARD ── */
       .lang-wrap {
         margin-top: 10px;
         display: flex;
@@ -662,7 +620,6 @@
         border-radius: 4px;
         background: linear-gradient(90deg, var(--gold), var(--gold-light));
       }
-
       @keyframes fadeUp {
         from {
           opacity: 0;
@@ -673,8 +630,6 @@
           transform: translateY(0);
         }
       }
-
-      /* ── MOBILE ADJUSTMENTS ── */
       @media (max-width: 768px) {
         .slide {
           padding: 60px 5vw 90px;
@@ -718,7 +673,6 @@
     <div id="progress"></div>
     <canvas id="bgCanvas"></canvas>
     <div class="grid-bg"></div>
-
     <div class="brand">
       <div class="brand-names">Abdullah &amp; Waqas</div>
       <div class="brand-sub">IELTS Presentation</div>
@@ -1008,31 +962,23 @@
             of traditions.
           </p>
           <ul class="vip-list">
-            <li>Korean music (K-Pop) and movies are loved worldwide</li>
-            <li>American movies are watched in every corner of the globe</li>
-            <li>International food is available in cities of every country</li>
-            <li>Fashion trends spread online within hours</li>
+            <li>
+              People from different countries can share traditions and
+              lifestyles more easily.
+            </li>
+            <li>
+              International travel, movies, and the internet help cultures
+              influence each other.
+            </li>
+            <li>
+              Students now study abroad and experience different societies.
+            </li>
+            <li>International food is available in cities of every country.</li>
+            <li>
+              Cultural exchange increases understanding and cooperation between
+              nations.
+            </li>
           </ul>
-          <div
-            style="
-              margin-top: 18px;
-              background: var(--card-bg);
-              border: 1px solid var(--border);
-              border-radius: 12px;
-              padding: 16px 20px;
-              max-width: 500px;
-            "
-          >
-            <p
-              style="
-                font-size: 12px;
-                letter-spacing: 2px;
-                color: var(--gold);
-                text-transform: uppercase;
-                margin-bottom: 6px;
-              "
-            ></p>
-          </div>
         </div>
       </div>
 
@@ -1106,7 +1052,10 @@
               <span class="col-card-icon">💰</span>
               <div class="col-card-title">Economic Growth</div>
               <ul class="vip-list">
-                <li>Drives innovation and entrepreneurship</li>
+                <li>
+                  Countries can learn new technologies and innovations from each
+                  other.
+                </li>
                 <li>Creates millions of jobs across borders</li>
               </ul>
             </div>
@@ -1115,7 +1064,10 @@
               <div class="col-card-title">Global Cooperation</div>
               <ul class="vip-list">
                 <li>Better access to global technology &amp; ideas</li>
-                <li>Nations tackle shared problems together</li>
+                <li>
+                  Countries can work together to solve global problems like
+                  climate change and health crises.
+                </li>
               </ul>
             </div>
             <div class="col-card">
@@ -1259,26 +1211,6 @@
               <span class="life-icon">🎵</span> Listening to music from every
               corner of the world
             </div>
-          </div>
-          <div
-            style="
-              margin-top: 16px;
-              background: var(--card-bg);
-              border: 1px solid var(--border);
-              border-radius: 12px;
-              padding: 14px 18px;
-              max-width: 500px;
-            "
-          >
-            <p
-              style="
-                font-size: 12px;
-                letter-spacing: 2px;
-                color: var(--gold);
-                text-transform: uppercase;
-                margin-bottom: 5px;
-              "
-            ></p>
           </div>
         </div>
       </div>
@@ -1451,7 +1383,9 @@
               opacity: 0;
               animation: fadeUp 0.8s 0.75s forwards;
             "
-          ></p>
+          >
+            Any questions?
+          </p>
           <div
             style="
               margin-top: 40px;
@@ -1514,11 +1448,9 @@
         { presenter: "Both", section: "Discussion", bg: "discuss" },
         { presenter: "Both", section: "Thank You", bg: "hero" },
       ];
-
       const slides = document.querySelectorAll(".slide");
       const totalSlides = slides.length;
       let current = 0;
-
       const dotsContainer = document.getElementById("dots");
       document.getElementById("totalNum").textContent = String(
         totalSlides,
@@ -1529,7 +1461,6 @@
         d.onclick = () => goTo(i);
         dotsContainer.appendChild(d);
       });
-
       function updateUI() {
         document.getElementById("currentNum").textContent = String(
           current + 1,
@@ -1570,7 +1501,6 @@
         if (e.key === "ArrowRight") nextSlide();
         if (e.key === "ArrowLeft") prevSlide();
       });
-      // Touch swipe
       let tx = 0;
       document.addEventListener(
         "touchstart",
@@ -1590,7 +1520,6 @@
         { passive: true },
       );
 
-      // ── CANVAS ENGINE ──
       const canvas = document.getElementById("bgCanvas"),
         ctx = canvas.getContext("2d");
       let W,
@@ -1888,7 +1817,6 @@
             ctx.stroke();
           });
         }
-
         particles.forEach((p) => {
           p.x += p.vx;
           p.y += p.vy;
@@ -1914,7 +1842,6 @@
       setBg("hero");
       updateUI();
 
-      // Cursor
       const cursor = document.getElementById("cursor"),
         ring = document.getElementById("cursorRing");
       let mx = 0,
